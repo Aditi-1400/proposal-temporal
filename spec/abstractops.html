@@ -1630,8 +1630,9 @@
       <dd>It converts _argument_ to an integer representing its Number value (replacing *NaN* with 0), or throws a *RangeError* when that Number value is not a finite integral Number.</dd>
     </dl>
     <emu-alg>
+      1. If _argument_ is *undefined*, return 0.
       1. Let _number_ be ? ToNumber(_argument_).
-      1. If _number_ is *NaN*, *+0*<sub>𝔽</sub>, or *-0*<sub>𝔽</sub>, return 0.
+      1. If _number_ is *-0*<sub>𝔽</sub>, return 0.
       1. If IsIntegralNumber(_number_) is *false*, throw a *RangeError* exception.
       1. Return ℝ(_number_).
     </emu-alg>
