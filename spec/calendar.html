@@ -157,8 +157,7 @@
       </dl>
       <emu-alg>
         1. Let _result_ be ? Invoke(_calendar_, *"year"*, « _dateLike_ »).
-        1. If _result_ is *undefined*, throw a *RangeError* exception.
-        1. Return ? ToIntegerWithTruncation(_result_).
+        1. Return ? ToIntegerWithTruncation(_result_, *false*).
       </emu-alg>
     </emu-clause>
 
