@@ -29,16 +29,15 @@
       <p>
         This function performs the following steps when called:
       </p>
-      <emu-note>The value of ! ToIntegerWithTruncation(*undefined*) for optional arguments is 0.</emu-note>
       <emu-alg>
         1. If NewTarget is *undefined*, then
           1. Throw a *TypeError* exception.
-        1. Let _hour_ be ? ToIntegerWithTruncation(_hour_, *true*).
-        1. Let _minute_ be ? ToIntegerWithTruncation(_minute_, *true*).
-        1. Let _second_ be ? ToIntegerWithTruncation(_second_, *true*).
-        1. Let _millisecond_ be ? ToIntegerWithTruncation(_millisecond_, *true*).
-        1. Let _microsecond_ be ? ToIntegerWithTruncation(_microsecond_, *true*).
-        1. Let _nanosecond_ be ? ToIntegerWithTruncation(_nanosecond_, *true*).
+        1. If _hour_ is *undefined*, let _hour_ be *+0*<sub>𝔽</sub>; else let _hour_ be ? ToIntegerWithTruncation(_hour_).
+        1. If _minute_ is *undefined*, let _minute_ be *+0*<sub>𝔽</sub>; else let _minute_ be ? ToIntegerWithTruncation(_minute_).
+        1. If _second_ is *undefined*, let _second_ be *+0*<sub>𝔽</sub>; else let _second_ be ? ToIntegerWithTruncation(_second_).
+        1. If _millisecond_ is *undefined*, let _millisecond_ be *+0*<sub>𝔽</sub>; else let _millisecond_ be ? ToIntegerWithTruncation(_millisecond_).
+        1. If _microsecond_ is *undefined*, let _microsecond_ be *+0*<sub>𝔽</sub>; else let _microsecond_ be ? ToIntegerWithTruncation(_microsecond_).
+        1. If _nanosecond_ is *undefined*, let _nanosecond_ be *+0*<sub>𝔽</sub>; else let _nanosecond_ be ? ToIntegerWithTruncation(_nanosecond_).
         1. Return ? CreateTemporalTime(_hour_, _minute_, _second_, _millisecond_, _microsecond_, _nanosecond_, NewTarget).
       </emu-alg>
     </emu-clause>
