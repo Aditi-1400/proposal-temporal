@@ -649,6 +649,9 @@ const nonIsoHelperBase = {
         throw new RangeError(`eraYear ${eraYear} does not match year ${year}`);
       }
     }
+    if ((calendarDate['era'] === undefined) !== (calendarDate['eraYear'] === undefined)) {
+      throw new RangeError("properties 'era' and 'eraYear' must be provided together");
+    }
   },
   /**
    * Allows derived calendars to add additional fields and/or to make
