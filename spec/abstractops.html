@@ -29,6 +29,119 @@
     </emu-alg>
   </emu-clause>
 
+  <emu-clause id="sec-isodatetoepochdays" type="abstract operation">
+    <h1>
+      ISODateToEpochDays (
+        _year_: an integer,
+        _month_: an integer,
+        _date_: an integer,
+      ): an integer
+    </h1>
+    <dl class="header">
+      <dt>description</dt>
+      <dd>It calculates a number of days.</dd>
+    </dl>
+    <emu-alg>
+      1. Let _ym_ be _year_ + (floor(_month_) / 12).
+      1. Let _mn_ be _month_ modulo 12.
+      1. Find a time value _t_ such that EpochTimeToEpochYear(_t_) is _ym_, EpochTimeToMonthInYear(_t_) is _mn_, and EpochTimeToDate(_t_) is 1.
+      1. Return ℝ(Day(_t_)) + _date_ - 1.
+    </emu-alg>
+    <emu-note type="editor"> This operation corresponds to ECMA-262 operation MakeDay(_year_, _month_, _date_). It calculates the result in mathematical values instead of Number values. These two operations would be unified when https://github.com/tc39/ecma262/issues/1087 is fixed.</emu-note>
+  </emu-clause>
+
+  <emu-clause id="sec-epochdaystoepochms" type="abstract operation">
+    <h1>
+      EpochDaysToEpochMs (
+        _day_: an integer,
+        _time_: an integer,
+      ): an integer
+    </h1>
+    <dl class="header">
+      <dt>description</dt>
+      <dd>It calculates a number of milliseconds.</dd>
+    </dl>
+    <emu-alg>
+      1. Return _day_ × ℝ(msPerDay) + _time_.
+    </emu-alg>
+    <emu-note type="editor"> This operation corresponds to ECMA-262 operation MakeDate(_date_, _time_). It calculates the result in mathematical values instead of Number values. These two operations would be unified when https://github.com/tc39/ecma262/issues/1087 is fixed.</emu-note>
+  </emu-clause>
+
+  <emu-clause id="sec-year-number">
+    <h1>Year Number</h1>
+    <p>ECMAScript uses a proleptic Gregorian calendar to map a day number to a year number and to determine the month and date within that year. In this calendar, leap years are precisely those which are (divisible by 4) and ((not divisible by 100) or (divisible by 400)). The number of days in year number _y_ is therefore defined by</p>
+    <emu-eqn id="eqn-mathematicaldaysinyear" aoid="MathematicalDaysInYear">
+      MathematicalDaysInYear(_y_)
+        = 365 if ((_y_) modulo 4) ≠ 0
+        = 366 if ((_y_) modulo 4) = 0 and ((_y_) modulo 100) ≠ 0
+        = 365 if ((_y_) modulo 100) = 0 and ((_y_) modulo 400) ≠ 0
+        = 366 if ((_y_) modulo 400) = 0
+    </emu-eqn>
+    <p>All non-leap years have 365 days with the usual number of days per month and leap years have an extra day in February. The day number of the first day of year _y_ is given by:</p>
+    <emu-eqn id="eqn-epochdaynumberforyear" aoid="EpochDayNumberForYear">EpochDayNumberForYear(_y_) = 365 × (_y_ - 1970) + floor((_y_ - 1969) / 4) - floor((_y_ - 1901) / 100) + floor((_y_ - 1601) / 400)</emu-eqn>
+    <p>The time of the start of a year is:</p>
+    <emu-eqn id="eqn-epochtimeforyear" aoid="EpochTimeForYear">EpochTimeForYear(_y_) = ℝ(msPerDay) × EpochDayNumberForYear(_y_)</emu-eqn>
+    <p>A time value determines a year by:</p>
+    <emu-eqn id="eqn-epochtimetoepochyear" aoid="EpochTimeToEpochYear">EpochTimeToEpochYear(_t_) = the largest integral Number _y_ (closest to +∞) such that EpochTimeForYear(_y_) ≤ _t_</emu-eqn>
+    <p>The leap-year function is 1 for a time within a leap year and otherwise is 0:</p>
+    <emu-eqn id="eqn-mathematicalinleapyear" aoid="MathematicalInLeapYear">
+      MathematicalInLeapYear(_t_)
+        = 0 if MathematicalDaysInYear(EpochTimeToEpochYear(_t_)) is 365
+        = 1 if MathematicalDaysInYear(EpochTimeToEpochYear(_t_)) is 366
+    </emu-eqn>
+    <emu-note type="editor"> These operations correspond to ECMA-262 operations DaysInYear(_y_), DayFromYear(_y_), TimeFromYear(_y_), YearFromTime(_t_). They calculate the result in mathematical values instead of Number values. These operations would be unified when https://github.com/tc39/ecma262/issues/1087 is fixed.</emu-note>
+  </emu-clause>
+
+  <emu-clause id="sec-month-number">
+    <h1>Month Number</h1>
+    <p>Months are identified by an integer in the inclusive interval from 0 to 11. The mapping EpochTimeToMonthInYear(_t_) from a time value _t_ to a month number is defined by:</p>
+    <emu-eqn id="eqn-epochtimetomonthinyear" aoid="EpochTimeToMonthInYear">
+      EpochTimeToMonthInYear(_t_)
+        = 0 if 0 ≤ EpochTimeToDayInYear(_t_) &lt; 31
+        = 1 if 31 ≤ EpochTimeToDayInYear(_t_) &lt; 59 + MathematicalInLeapYear(_t_)
+        = 2 if 59 + MathematicalInLeapYear(_t_) ≤ EpochTimeToDayInYear(_t_) &lt; 90 + MathematicalInLeapYear(_t_)
+        = 3 if 90 + MathematicalInLeapYear(_t_) ≤ EpochTimeToDayInYear(_t_) &lt; 120 + MathematicalInLeapYear(_t_)
+        = 4 if 120 + MathematicalInLeapYear(_t_) ≤ EpochTimeToDayInYear(_t_) &lt; 151 + MathematicalInLeapYear(_t_)
+        = 5 if 151 + MathematicalInLeapYear(_t_) ≤ EpochTimeToDayInYear(_t_) &lt; 181 + MathematicalInLeapYear(_t_)
+        = 6 if 181 + MathematicalInLeapYear(_t_) ≤ EpochTimeToDayInYear(_t_) &lt; 212 + MathematicalInLeapYear(_t_)
+        = 7 if 212 + MathematicalInLeapYear(_t_) ≤ EpochTimeToDayInYear(_t_) &lt; 243 + MathematicalInLeapYear(_t_)
+        = 8 if 243 + MathematicalInLeapYear(_t_) ≤ EpochTimeToDayInYear(_t_) &lt; 273 + MathematicalInLeapYear(_t_)
+        = 9 if 273 + MathematicalInLeapYear(_t_) ≤ EpochTimeToDayInYear(_t_) &lt; 304 + MathematicalInLeapYear(_t_)
+        = 10 if 304 + MathematicalInLeapYear(_t_) ≤ EpochTimeToDayInYear(_t_) &lt; 334 + MathematicalInLeapYear(_t_)
+        = 11 if 334 + MathematicalInLeapYear(_t_) ≤ EpochTimeToDayInYear(_t_) &lt; 365 + MathematicalInLeapYear(_t_)
+    </emu-eqn>
+    <p>where</p>
+    <emu-eqn id="eqn-epochtimetodayinyear" aoid="EpochTimeToDayInYear">EpochTimeToDayInYear(_t_) = ℝ(Day(_t_)) - EpochDayNumberForYear(EpochTimeToEpochYear(_t_))</emu-eqn>
+    <p>A month value of 0 specifies January; 1 specifies February; 2 specifies March; 3 specifies April; 4 specifies May; 5 specifies June; 6 specifies July; 7 specifies August; 8 specifies September; 9 specifies October; 10 specifies November; and 11 specifies December. Note that <emu-eqn>EpochTimeToMonthInYear(0) = 0</emu-eqn>, corresponding to Thursday, 1 January 1970.</p>
+    <emu-note type="editor"> These operations correspond to ECMA-262 operations MonthFromTime(_t_) and DayWithinYear(_y_). They calculate the result in mathematical values instead of Number values. These operations would be unified when https://github.com/tc39/ecma262/issues/1087 is fixed.</emu-note>
+  </emu-clause>
+  <emu-clause id="sec-date-number">
+    <h1>Date Number</h1>
+    <p>A date number is identified by a mathematical value in the inclusive interval from 1 to 31. The mapping EpochTimeToDate(_t_) from a time value _t_ to a date number is defined by:</p>
+    <emu-eqn id="eqn-epochtimetodate" aoid="EpochTimeToDate">
+      EpochTimeToDate(_t_)
+        = EpochTimeToDayInYear(_t_) + 1 if EpochTimeToMonthInYear(_t_) is 0
+        = EpochTimeToDayInYear(_t_) - 30 if EpochTimeToMonthInYear(_t_) is 1
+        = EpochTimeToDayInYear(_t_) - 58 - MathematicalInLeapYear(_t_) if EpochTimeToMonthInYear(_t_) is 2
+        = EpochTimeToDayInYear(_t_) - 89 - MathematicalInLeapYear(_t_) if EpochTimeToMonthInYear(_t_) is 3
+        = EpochTimeToDayInYear(_t_) - 119 - MathematicalInLeapYear(_t_) if EpochTimeToMonthInYear(_t_) is 4
+        = EpochTimeToDayInYear(_t_) - 150 - MathematicalInLeapYear(_t_) if EpochTimeToMonthInYear(_t_) is 5
+        = EpochTimeToDayInYear(_t_) - 180 - MathematicalInLeapYear(_t_) if EpochTimeToMonthInYear(_t_) is 6
+        = EpochTimeToDayInYear(_t_) - 211 - MathematicalInLeapYear(_t_) if EpochTimeToMonthInYear(_t_) is 7
+        = EpochTimeToDayInYear(_t_) - 242 - MathematicalInLeapYear(_t_) if EpochTimeToMonthInYear(_t_) is 8
+        = EpochTimeToDayInYear(_t_) - 272 - MathematicalInLeapYear(_t_) if EpochTimeToMonthInYear(_t_) is 9
+        = EpochTimeToDayInYear(_t_) - 303 - MathematicalInLeapYear(_t_) if EpochTimeToMonthInYear(_t_) is 10
+        = EpochTimeToDayInYear(_t_) - 333 - MathematicalInLeapYear(_t_) if EpochTimeToMonthInYear(_t_) is 11
+    </emu-eqn>
+    <emu-note type="editor"> This operation corresponds to ECMA-262 operation DateFromTime(_t_). It calculates the result in mathematical values instead of Number values. These operations would be unified when https://github.com/tc39/ecma262/issues/1087 is fixed.</emu-note>
+  </emu-clause>
+  <emu-clause id="sec-week-day">
+    <h1>Week Day</h1>
+    <p>The weekday for a particular time _t_ is defined as</p>
+    <emu-eqn id="eqn-epochtimetoweekday" aoid="EpochTimeToWeekDay">EpochTimeToWeekDay(_t_) =(ℝ(Day(_t_)) + 4) modulo 7</emu-eqn>
+    <p>A weekday value of 0 specifies Sunday; 1 specifies Monday; 2 specifies Tuesday; 3 specifies Wednesday; 4 specifies Thursday; 5 specifies Friday; and 6 specifies Saturday. Note that <emu-eqn>EpochTimeToWeekDay(0) = 4</emu-eqn>, corresponding to Thursday, 1 January 1970.</p>
+    <emu-note type="editor"> This operation corresponds to ECMA-262 operation WeekDay(_t_). It calculates the result in mathematical values instead of Number values. These operations would be unified when https://github.com/tc39/ecma262/issues/1087 is fixed.</emu-note>
+  </emu-clause>
   <!-- Copied from ECMA-402 GetOptionsObject -->
   <emu-clause id="sec-getoptionsobject" aoid="GetOptionsObject">
     <h1>GetOptionsObject ( _options_ )</h1>
